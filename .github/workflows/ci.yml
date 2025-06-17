@@ -1,0 +1,28 @@
+name: Auto Commit Jupyter Notebook Changes
+
+# این workflow به وسیله‌ی یک trigger زمانی (schedule) یا دستی (workflow_dispatch) اجرا می‌شود
+on:
+  schedule:
+    - cron: '*/1 * * * *'  # هر ۵ دقیقه اجرا می‌شود (به عنوان نمونه)
+  workflow_dispatch:
+
+jobs:
+  commit_changes:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: Setup Git user
+      run: |
+        git config --global user.name "GhazalehKeyvani"
+        git config --global user.email "github-actions[ghkey278@gmail.com]@users.noreply.github.com"
+    - name: Commit changes if any
+      run: |
+        git add -A
+        # اگر تغییراتی وجود داشته باشد، commit انجام می‌شود
+        git diff-index --quiet HEAD || git commit -m "Auto commit Jupyter Notebook updates at $(date)"
+    - name: Push changes
+      run: |
+        git push
